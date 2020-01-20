@@ -1,0 +1,43 @@
+{
+  "name": "sourcebit-target-jekyll",
+  "version": "0.1.0",
+  "description": "A Sourcebit plugin for Jekyll",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run format",
+    "format": "prettier --write \"./**/*.{js,jsx,md,html}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackbithq/sourcebit-target-jekyll.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stackbithq/sourcebit-target-jekyll/issues"
+  },
+  "homepage": "https://github.com/stackbithq/sourcebit-target-jekyll#readme",
+  "dependencies": {
+    "@sindresorhus/slugify": "^0.9.1",
+    "inquirer-table-prompt": "^0.1.0",
+    "mkdirp": "^0.5.1",
+    "yaml": "^1.7.2"
+  },
+  "devDependencies": {
+    "husky": "^4.0.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,md,html}": [
+      "npm run format",
+      "git add"
+    ]
+  }
+}
