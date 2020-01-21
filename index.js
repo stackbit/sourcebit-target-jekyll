@@ -82,10 +82,10 @@ module.exports.getOptionsFromSetup = ({ answers }) => {
       location = `'${directory}/'`;
 
       if (useDate) {
-        location += ` + createdAt.substring(0, 10) + '-' + `;
+        location += ` + createdAt.substring(0, 10) + '-'`;
       }
 
-      location += `utils.slugify(fields['${fileNameField}']) + '.md'`;
+      location += ` + utils.slugify(fields['${fileNameField}']) + '.md'`;
     }
 
     const contentField = `fields['${page.contentField}']`;
