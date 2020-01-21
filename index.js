@@ -96,7 +96,7 @@ module.exports.getOptionsFromSetup = ({ answers }) => {
 
     conditions.push(
       `if (modelName === '${modelName}' && projectId === '${projectId}' && source === '${source}') {`,
-      `  const { __metadata, content, layout, ...frontmatterFields } = entry;`,
+      `  const { __metadata, '${page.contentField}': content, layout, ...frontmatterFields } = entry;`,
       ``,
       `  return {`,
       `    content: {`,
