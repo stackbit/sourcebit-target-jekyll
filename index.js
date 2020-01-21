@@ -78,30 +78,46 @@ module.exports.getOptionsFromSetup = ({ answers }) => {
       location = `'${page.location.fileName}'`;
     } else {
       const { directory, fileNameField, useDate } = page.location;
+      const locationParts = [];
 
-      location = `'${directory}/'`;
-
-      if (useDate) {
-        location += ` + createdAt.substring(0, 10) + '-'`;
+      if (directory) {
+        locationParts.push(`'${directory}/'`);
       }
 
-      location += ` + utils.slugify(fields['${fileNameField}']) + '.md'`;
+      if (useDate) {
+        locationParts.push(`createdAt.substring(0, 10) + '-'`);
+      }
+
+      locationParts.push(`utils.slugify(fields['${fileNameField}']) + '.md'`);
+      location = locationParts.join(" + ");
     }
 
-    const contentField = `fields['${page.contentField}']`;
+    const contentField = page.contentField
+      ? `fields['${page.contentField}']`
+      : "{}";
     const layout =
       page.layoutSource === "static"
         ? `'${page.layout}'`
         : `fields['${page.layout}']`;
+    const extractedProperties = [
+      "__metadata",
+      page.contentField ? `'${page.contentField}': content` : null,
+      page.layoutSource ? "layout" : null,
+      "...frontmatterFields"
+    ];
 
     conditions.push(
       `if (modelName === '${modelName}' && projectId === '${projectId}' && source === '${source}') {`,
-      `  const { __metadata, '${page.contentField}': content, layout, ...frontmatterFields } = entry;`,
+      `  const { ${extractedProperties.filter(Boolean).join(", ")} } = entry;`,
       ``,
       `  return {`,
       `    content: {`,
       `      body: ${contentField},`,
-      `      frontmatter: { ...frontmatterFields, layout: ${layout} },`,
+      `      frontmatter: ${
+        page.layoutSource
+          ? `{ ...frontmatterFields, layout: ${layout} }`
+          : "frontmatterFields"
+      },`,
       `    },`,
       `    format: 'frontmatter-md',`,
       `    path: ${location}`,
@@ -140,7 +156,7 @@ const { __metadata: meta, ...fields } = entry;
 
 if (!meta) return;
 
-const { createdAt, modelName, projectId, source } = meta;
+const { createdAt = '', modelName, projectId, source } = meta;
 
 ${conditions.join("\n")}
   `.trim();
