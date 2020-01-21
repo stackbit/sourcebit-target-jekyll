@@ -1,3 +1,4 @@
+const fs = require("fs");
 const inquirerTablePrompt = require("inquirer-table-prompt");
 const mkdirp = require("mkdirp");
 const path = require("path");
@@ -15,6 +16,8 @@ const FILE_WRITERS = {
   json: writeJSON,
   yml: writeYAML
 };
+
+let fileCache = [];
 
 module.exports.name = pkg.name;
 
@@ -35,19 +38,38 @@ module.exports.transform = ({ data, log, options }) => {
       return;
     }
 
+    const fullPath = path.resolve(process.cwd(), writer.path);
+
     // If `append: true`, we'll append the content of the new writer to any
     // existing content at this path. If not, we'll overwrite it.
-    if (files[writer.path] && writer.append) {
+    if (files[fullPath] && writer.append) {
       // Ensuring the existing content for this path is an array.
-      files[writer.path].content = Array.isArray(files[writer.path].content)
-        ? files[writer.path].content
-        : [files[writer.path].content];
-      files[writer.path].content.push(writer.content);
+      files[fullPath].content = Array.isArray(files[fullPath].content)
+        ? files[fullPath].content
+        : [files[fullPath].content];
+      files[fullPath].content.push(writer.content);
     } else {
-      files[writer.path] = writer;
+      files[fullPath] = writer;
     }
   });
 
+  // We start by deleting any files that were previously created by this plugin
+  // but that are not part of the site after the update.
+  fileCache.forEach(filePath => {
+    if (!files[filePath]) {
+      try {
+        fs.unlinkSync(filePath);
+
+        log(`Deleted file: ${filePath}`);
+      } catch (_) {
+        log(`Could not delete file: ${filePath}`);
+      }
+    }
+  });
+
+  fileCache = Object.keys(files);
+
+  // Now we write all the files that need to be created.
   Object.keys(files).forEach(filePath => {
     const file = files[filePath];
     const writerFunction = FILE_WRITERS[file.format];
