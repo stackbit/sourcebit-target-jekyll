@@ -87,7 +87,7 @@ module.exports.transform = ({ data, log, options }) => {
   });
 };
 
-module.exports.getOptionsFromSetup = ({ answers }) => {
+module.exports.getOptionsFromSetup = ({ answers, debug }) => {
   const { data: dataObjects = [], pages = [] } = answers;
   const conditions = [];
 
@@ -182,6 +182,8 @@ const { createdAt = '', modelName, projectId, source } = meta;
 
 ${conditions.join("\n")}
   `.trim();
+
+  debug("Function body: %s", functionBody);
 
   return {
     writeFile: new Function("entry", "utils", functionBody)
