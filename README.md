@@ -31,13 +31,11 @@ The return value of this function determines whether the entry being evaluated w
 
 To write a file for an entry, the return value should be an object with a `content`, `format` and `path` properties. The nature of these properties may vary slightly based on the value of `format`, as shown in the table below.
 
-| `format`         | `content`                                                                                                                                          | `path`                                                         | Description                                     |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------- |
-| `frontmatter-md` | Must be an object containing a `frontmatter` and `body` properties, which will be written to the file's frontmatter and content body, respectively | The absolute path to the file. Must end with `.md`.            | Writes a Markdown file with a YAML frontmatter. |
-| `yml`            | The object to be written as YAML                                                                                                                   | The absolute path to the file. Must end with `.yaml` or `.yml` | Writes a YAML file.                             |
-| `json`           | The object to be written as JSON                                                                                                                   | The absolute path to the file. Must end with `.json`.          |                                                 |
-
-- `content` (Object): The object(s) to be written
+| `format`         | `content`                                                                                                                               | `path`                                                         | Description                                     |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------- |
+| `frontmatter-md` | Object containing a `frontmatter` and `body` properties, which will be written to the file's frontmatter and content body, respectively | The absolute path to the file. Must end with `.md`.            | Writes a Markdown file with a YAML frontmatter. |
+| `yml`            | Object to be written as YAML                                                                                                            | The absolute path to the file. Must end with `.yaml` or `.yml` | Writes a YAML file.                             |
+| `json`           | Object to be written as JSON                                                                                                            | The absolute path to the file. Must end with `.json`.          | Writes a JSON file                              |
 
 ### 👀 Example configuration
 
@@ -49,7 +47,7 @@ module.exports = {
     {
       module: require("sourcebit-target-jekyll"),
       options: {
-        writeFile: function anonymous(entry, utils) {
+        writeFile: function(entry, utils) {
           const { __metadata: meta, ...fields } = entry;
 
           if (!meta) return;
