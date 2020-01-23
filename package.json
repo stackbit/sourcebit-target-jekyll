@@ -11,9 +11,15 @@
     "type": "git",
     "url": "git+https://github.com/stackbithq/sourcebit-target-jekyll.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "headless",
+    "headless-cms",
+    "jamstack",
+    "ssg",
+    "jekyll"
+  ],
+  "author": "Stackbit",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/stackbithq/sourcebit-target-jekyll/issues"
   },
