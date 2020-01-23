@@ -199,9 +199,10 @@ module.exports.getSetup = ({ chalk, data, inquirer }) => {
         type: "table",
         name: "models",
         message: "Choose a type for each of the following models:",
+        pageSize: 7,
         rows: data.models.map((model, index) => ({
-          name: `${model.modelLabel || model.modelName} ${chalk.green(
-            `(${model.source} / ${model.projectId})`
+          name: `${model.modelLabel || model.modelName}\n${chalk.dim(
+            `└${model.source}`
           )}`,
           value: index
         })),

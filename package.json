@@ -1,6 +1,6 @@
 {
   "name": "sourcebit-target-jekyll",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A Sourcebit plugin for Jekyll",
   "main": "index.js",
   "scripts": {
@@ -20,12 +20,12 @@
   "homepage": "https://github.com/stackbithq/sourcebit-target-jekyll#readme",
   "dependencies": {
     "@sindresorhus/slugify": "^0.9.1",
-    "inquirer-table-prompt": "^0.1.0",
+    "inquirer-table-prompt": "^0.2.1",
     "mkdirp": "^0.5.1",
     "yaml": "^1.7.2"
   },
   "devDependencies": {
-    "husky": "^4.0.0",
+    "husky": "^4.2.0",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1"
   },
