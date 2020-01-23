@@ -8,6 +8,16 @@
 
 This plugin writes content from any Sourcebit data source into files compatible with the Jekyll static site generator.
 
+## 🏗 Installation
+
+To install the plugin and add it to your project, run:
+
+```
+npm install sourcebit-target-jekyll --save
+```
+
+> 💡 You don't need to run this command if you start Sourcebit using the [interactive setup process](#%EF%B8%8F-interactive-setup-process), as the CLI will install the plugin for you and add it as a dependency to your project.
+
 ## ⚙️ Configuration
 
 The plugin accepts the following configuration parameters. They can be supplied in any of the following ways:
