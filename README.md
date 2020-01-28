@@ -47,6 +47,8 @@ To write a file for an entry, the return value should be an object with a `conte
 | `yml`            | Object to be written as YAML                                                                                                            | The absolute path to the file. Must end with `.yaml` or `.yml` | Writes a YAML file.                             |
 | `json`           | Object to be written as JSON                                                                                                            | The absolute path to the file. Must end with `.json`.          | Writes a JSON file                              |
 
+> 💡 If you wish to create multiple files for an entry, set the return value to an array of objects, each containing a `content`, `format` and `path` properties.
+
 ### 👀 Example configuration
 
 _sourcebit.js_
