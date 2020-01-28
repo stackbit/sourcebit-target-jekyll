@@ -34,23 +34,31 @@ module.exports.transform = ({ data, log, options }) => {
   data.objects.forEach(object => {
     const writer = options.writeFile(object, utils);
 
-    if (!writer || !writer.path || !FILE_WRITERS[writer.format]) {
+    if (!writer) {
       return;
     }
 
-    const fullPath = path.resolve(process.cwd(), writer.path);
+    const writers = Array.isArray(writer) ? writer : [writer];
 
-    // If `append: true`, we'll append the content of the new writer to any
-    // existing content at this path. If not, we'll overwrite it.
-    if (files[fullPath] && writer.append) {
-      // Ensuring the existing content for this path is an array.
-      files[fullPath].content = Array.isArray(files[fullPath].content)
-        ? files[fullPath].content
-        : [files[fullPath].content];
-      files[fullPath].content.push(writer.content);
-    } else {
-      files[fullPath] = writer;
-    }
+    writers.forEach(writer => {
+      if (!writer.path || !FILE_WRITERS[writer.format]) {
+        return;
+      }
+
+      const fullPath = path.resolve(process.cwd(), writer.path);
+
+      // If `append: true`, we'll append the content of the new writer to any
+      // existing content at this path. If not, we'll overwrite it.
+      if (files[fullPath] && writer.append) {
+        // Ensuring the existing content for this path is an array.
+        files[fullPath].content = Array.isArray(files[fullPath].content)
+          ? files[fullPath].content
+          : [files[fullPath].content];
+        files[fullPath].content.push(writer.content);
+      } else {
+        files[fullPath] = writer;
+      }
+    });
   });
 
   // We start by deleting any files that were previously created by this plugin
@@ -70,7 +78,7 @@ module.exports.transform = ({ data, log, options }) => {
   fileCache = Object.keys(files);
 
   // Now we write all the files that need to be created.
-  Object.keys(files).forEach(filePath => {
+  const queue = Object.keys(files).map(async filePath => {
     const file = files[filePath];
     const writerFunction = FILE_WRITERS[file.format];
 
@@ -78,13 +86,19 @@ module.exports.transform = ({ data, log, options }) => {
     mkdirp.sync(path.dirname(filePath));
 
     try {
-      writerFunction(filePath, file.content);
+      await writerFunction(filePath, file.content);
 
       log(`Created file: ${filePath}`);
+
+      return true;
     } catch (_) {
       log(`Could not create file: ${filePath}`);
+
+      return false;
     }
   });
+
+  return Promise.all(queue);
 };
 
 module.exports.getOptionsFromSetup = ({ answers, debug }) => {
