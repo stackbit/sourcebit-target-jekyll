@@ -1,23 +1,7 @@
-const fs = require("fs");
 const inquirerTablePrompt = require("inquirer-table-prompt");
-const mkdirp = require("mkdirp");
-const path = require("path");
 const pkg = require("./package.json");
 const slugify = require("@sindresorhus/slugify");
 const { getSetupForData, getSetupForPage } = require("./lib/setup");
-const {
-  writeFrontmatterMarkdown,
-  writeJSON,
-  writeYAML
-} = require("./lib/file-writers");
-
-const FILE_WRITERS = {
-  "frontmatter-md": writeFrontmatterMarkdown,
-  json: writeJSON,
-  yml: writeYAML
-};
-
-let fileCache = [];
 
 module.exports.name = pkg.name;
 
@@ -29,76 +13,18 @@ module.exports.transform = ({ data, log, options }) => {
   const utils = {
     slugify
   };
-  const files = {};
-
-  data.objects.forEach(object => {
+  const files = data.objects.reduce((result, object) => {
     const writer = options.writeFile(object, utils);
 
-    if (!writer) {
-      return;
-    }
+    if (!writer) return result;
 
-    const writers = Array.isArray(writer) ? writer : [writer];
+    return result.concat(writer);
+  }, []);
 
-    writers.forEach(writer => {
-      if (!writer.path || !FILE_WRITERS[writer.format]) {
-        return;
-      }
-
-      const fullPath = path.resolve(process.cwd(), writer.path);
-
-      // If `append: true`, we'll append the content of the new writer to any
-      // existing content at this path. If not, we'll overwrite it.
-      if (files[fullPath] && writer.append) {
-        // Ensuring the existing content for this path is an array.
-        files[fullPath].content = Array.isArray(files[fullPath].content)
-          ? files[fullPath].content
-          : [files[fullPath].content];
-        files[fullPath].content.push(writer.content);
-      } else {
-        files[fullPath] = writer;
-      }
-    });
-  });
-
-  // We start by deleting any files that were previously created by this plugin
-  // but that are not part of the site after the update.
-  fileCache.forEach(filePath => {
-    if (!files[filePath]) {
-      try {
-        fs.unlinkSync(filePath);
-
-        log(`Deleted file: ${filePath}`);
-      } catch (_) {
-        log(`Could not delete file: ${filePath}`);
-      }
-    }
-  });
-
-  fileCache = Object.keys(files);
-
-  // Now we write all the files that need to be created.
-  const queue = Object.keys(files).map(async filePath => {
-    const file = files[filePath];
-    const writerFunction = FILE_WRITERS[file.format];
-
-    // Ensuring the directory exists.
-    mkdirp.sync(path.dirname(filePath));
-
-    try {
-      await writerFunction(filePath, file.content);
-
-      log(`Created file: ${filePath}`);
-
-      return true;
-    } catch (_) {
-      log(`Could not create file: ${filePath}`);
-
-      return false;
-    }
-  });
-
-  return Promise.all(queue);
+  return {
+    ...data,
+    files: (data.files || []).concat(files)
+  };
 };
 
 module.exports.getOptionsFromSetup = ({ answers, debug }) => {
