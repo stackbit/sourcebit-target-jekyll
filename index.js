@@ -14,11 +14,17 @@ module.exports.transform = ({ data, log, options }) => {
     slugify
   };
   const files = data.objects.reduce((result, object) => {
-    const writer = options.writeFile(object, utils);
+    try {
+      const writer = options.writeFile(object, utils);
 
-    if (!writer) return result;
+      if (!writer) return result;
 
-    return result.concat(writer);
+      return result.concat(writer);
+    } catch (error) {
+      console.log(error);
+
+      return result;
+    }
   }, []);
 
   return {
@@ -67,9 +73,14 @@ module.exports.getOptionsFromSetup = ({ answers, debug }) => {
       page.layoutSource ? "layout" : null,
       "...frontmatterFields"
     ];
+    const conditionParts = [
+      modelName && `modelName === '${modelName}'`,
+      projectId && `projectId === '${projectId}'`,
+      source && `source === '${source}'`
+    ].filter(Boolean);
 
     conditions.push(
-      `if (modelName === '${modelName}' && projectId === '${projectId}' && source === '${source}') {`,
+      `if (${conditionParts.join(" && ")}) {`,
       `  const { ${extractedProperties.filter(Boolean).join(", ")} } = entry;`,
       ``,
       `  return {`,

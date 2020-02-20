@@ -1,6 +1,6 @@
 {
   "name": "sourcebit-target-jekyll",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A Sourcebit plugin for Jekyll",
   "main": "index.js",
   "scripts": {
