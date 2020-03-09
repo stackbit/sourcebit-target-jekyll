@@ -28,7 +28,7 @@ module.exports.transform = ({ data, debug, log, options }) => {
       return result.concat(writer);
     } catch (error) {
       const objectDetails =
-        object.__metadata && object.__metadata.id
+        object && object.__metadata && object.__metadata.id
           ? ` (Object ID: ${object.__metadata.id})`
           : "";
 
