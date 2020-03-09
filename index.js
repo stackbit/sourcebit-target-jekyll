@@ -5,13 +5,19 @@ const { getSetupForData, getSetupForPage } = require("./lib/setup");
 
 module.exports.name = pkg.name;
 
-module.exports.transform = ({ data, log, options }) => {
+module.exports.transform = ({ data, debug, log, options }) => {
   if (typeof options.writeFile !== "function") {
     return data;
   }
 
   const utils = {
-    slugify
+    slugify: input => {
+      if (typeof input !== "string" || input.trim().length === 0) {
+        throw new Error("ERROR_FAILED_SLUGIFY");
+      }
+
+      return slugify(input);
+    }
   };
   const files = data.objects.reduce((result, object) => {
     try {
@@ -21,7 +27,23 @@ module.exports.transform = ({ data, log, options }) => {
 
       return result.concat(writer);
     } catch (error) {
-      console.log(error);
+      const objectDetails =
+        object.__metadata && object.__metadata.id
+          ? ` (Object ID: ${object.__metadata.id})`
+          : "";
+
+      if (error.message === "ERROR_FAILED_SLUGIFY") {
+        log(
+          `Could not write object to disk because \`slugify()\` was used on an empty field.${objectDetails}`,
+          "fail"
+        );
+
+        debug(error);
+      } else {
+        log(`Could not write object to disk.${objectDetails} `, "fail");
+
+        debug(error);
+      }
 
       return result;
     }
