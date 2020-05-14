@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/sourcebit-target-jekyll.svg)](https://badge.fury.io/js/sourcebit-target-jekyll)
 
-> A Sourcebit plugin for the [Jekyll](https://jekyllrb.com/) static site generator
+> A [Sourcebit](https://github.com/stackbithq/sourcebit) plugin for the [Jekyll](https://jekyllrb.com/) static site generator
 
 ## 👩‍🏫 Introduction
 
