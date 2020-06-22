@@ -22,10 +22,10 @@ npm install sourcebit-target-jekyll --save
 
 The plugin accepts the following configuration parameters. They can be supplied in any of the following ways:
 
-- In the `options` object of the plugin configuration block inside `sourcebit.js`, with the value of the _Property_ column as a key;
-- As an environment variable named after the _Env variable_ column, when running the `sourcebit fetch` command;
-- As part of a `.env` file, with the value of the _Env variable_ column separated by the value with an equals sign (e.g. `MY_VARIABLE=my-value`);
-- As a CLI parameter, when running the `sourcebit fetch` command, using the value of the _Parameter_ column as the name of the parameter (e.g. `sourcebit fetch --my-parameter`).
+-   In the `options` object of the plugin configuration block inside `sourcebit.js`, with the value of the _Property_ column as a key;
+-   As an environment variable named after the _Env variable_ column, when running the `sourcebit fetch` command;
+-   As part of a `.env` file, with the value of the _Env variable_ column separated by the value with an equals sign (e.g. `MY_VARIABLE=my-value`);
+-   As a CLI parameter, when running the `sourcebit fetch` command, using the value of the _Parameter_ column as the name of the parameter (e.g. `sourcebit fetch --my-parameter`).
 
 | Property    | Type     | Visibility | Default value | Env variable | Parameter | Description                                                                                                                    |
 | ----------- | -------- | ---------- | ------------- | ------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -33,9 +33,9 @@ The plugin accepts the following configuration parameters. They can be supplied 
 
 The `writeFile` function is invoked on each entry from the `objects` data bucket, with the following parameters:
 
-- `entry` (Object): An entry from the `objects` data bucket
-- `utils` (Object): An object containing utility methods:
-  - `slugify` (Function): Creates a filename-friendly version of any string (e.g. `utils.slugify('Hello, Sourcebit friends!') === 'hello-sourcebit-friends'`)
+-   `entry` (Object): An entry from the `objects` data bucket
+-   `utils` (Object): An object containing utility methods:
+    -   `slugify` (Function): Creates a filename-friendly version of any string (e.g. `utils.slugify('Hello, Sourcebit friends!') === 'hello-sourcebit-friends'`)
 
 The return value of this function determines whether the entry being evaluated will be written to a file and, if so, defines the path, the format and the contents of the file.
 
@@ -55,42 +55,33 @@ _sourcebit.js_
 
 ```js
 module.exports = {
-  plugins: [
-    {
-      module: require("sourcebit-target-jekyll"),
-      options: {
-        writeFile: function(entry, utils) {
-          const { __metadata: meta, ...fields } = entry;
+    plugins: [
+        {
+            module: require('sourcebit-target-jekyll'),
+            options: {
+                writeFile: function(entry, utils) {
+                    const { __metadata: meta, ...fields } = entry;
 
-          if (!meta) return;
+                    if (!meta) return;
 
-          const { createdAt = "", modelName, projectId, source } = meta;
+                    const { createdAt = '', modelName, projectId, source } = meta;
 
-          if (
-            modelName === "post" &&
-            projectId === "123456789" &&
-            source === "sourcebit-source-contentful"
-          ) {
-            const { __metadata, content, layout, ...frontmatterFields } = entry;
+                    if (modelName === 'post' && projectId === '123456789' && source === 'sourcebit-source-contentful') {
+                        const { __metadata, content, layout, ...frontmatterFields } = entry;
 
-            return {
-              content: {
-                body: fields["content"],
-                frontmatter: { ...frontmatterFields, layout: fields["layout"] }
-              },
-              format: "frontmatter-md",
-              path:
-                "_posts/" +
-                createdAt.substring(0, 10) +
-                "-" +
-                utils.slugify(fields["title"]) +
-                ".md"
-            };
-          }
+                        return {
+                            content: {
+                                body: fields['content'],
+                                frontmatter: { ...frontmatterFields, layout: fields['layout'] }
+                            },
+                            format: 'frontmatter-md',
+                            path: '_posts/' + createdAt.substring(0, 10) + '-' + utils.slugify(fields['title']) + '.md'
+                        };
+                    }
+                }
+            }
         }
-      }
-    }
-  ]
+    ]
 };
 ```
 
@@ -102,8 +93,8 @@ This plugin offers an interactive setup process via the `npx create-sourcebit` c
 
 This plugin expects the following data buckets to exist:
 
-- `models`: An array of content models
-- `objects`: An array of content entries
+-   `models`: An array of content models
+-   `objects`: An array of content entries
 
 ## 📤 Output
 
